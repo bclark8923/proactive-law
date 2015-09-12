@@ -10,4 +10,4 @@ import errno
 import os
 
 if __name__ == '__main__':
-    pass
+	print "started"
