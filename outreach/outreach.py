@@ -11,5 +11,5 @@ import os
 
 def outreach():
 	while True:
-		print "test"
+		print "outreach"
 		time.sleep(15)

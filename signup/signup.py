@@ -9,5 +9,7 @@ import threading
 import errno
 import os
 
-if __name__ == '__main__':
-    pass
+def signup():
+	while True:
+		print "signup"
+		time.sleep(15)
