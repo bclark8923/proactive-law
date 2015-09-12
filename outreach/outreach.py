@@ -9,7 +9,7 @@ import threading
 import errno
 import os
 
-def outreach():
+def run():
 	while True:
 		print "outreach"
 		time.sleep(15)

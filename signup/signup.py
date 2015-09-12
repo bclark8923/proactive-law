@@ -9,7 +9,7 @@ import threading
 import errno
 import os
 
-def signup():
+def run():
 	while True:
 		print "signup"
 		time.sleep(15)

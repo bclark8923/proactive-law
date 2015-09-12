@@ -8,6 +8,8 @@ import time
 import threading
 import errno
 import os
+import outreach
 
 if __name__ == '__main__':
 	print "started"
+	outreach.run()

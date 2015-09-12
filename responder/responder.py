@@ -9,5 +9,7 @@ import threading
 import errno
 import os
 
-if __name__ == '__main__':
-    pass
+def run():
+	while True:
+		print "responder"
+		time.sleep(15)
