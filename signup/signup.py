@@ -1,39 +1,45 @@
 from flask import Flask, request, redirect, session
 import twilio.twiml
-from parse_rest.user import User
 from parse_rest.connection import register
+from parse_rest.datatypes import Object
+from parse_rest.query import QueryResourceDoesNotExist
 
-register(<application_id>, <rest_api_key>[, master_key=None])
- 
-# The session object makes use of a secret key.
-SECRET_KEY = 'a secret key'
+import re
+
+
 app = Flask(__name__)
 app.config.from_object(__name__)
  
+userClassName = "user"
+User = Object.factory(userClassName)
+
+citationClassName = "citations"
+Citation = Object.factory(citationClassName)
+
+violationClassName = "violations"
+Violation = Object.factory(violationClassName)
  
 @app.route("/", methods=['POST'])
 def hello_monkey():
-    """Main method to handle incoming SMS."""
+	"""Main method to handle incoming SMS."""
  
-    from_number = request.values.get('From')
-    user = User.Query.get(phone_number=from_number)
-    if user and user.first_name and user.last_name and user.phone_number:
-        resp = handle_inquery(user, request.values.get('Body'))
-    else:
-    	if not user:
-    		user = User()
-    		body = from_number
-		else:
-			body = request.values.get('Body')
+	from_number = request.values.get('From')
+	body = request.values.get('Body')
+	print from_number
+	print body
 
-        resp = signup_new_user(user, body)
+	try:
+		user = User.Query.get(phone_number=from_number)
+	except QueryResourceDoesNotExist:
+		user = User(first_name=None, last_name=None, phone_number=None, birthdate=None)
+		body = from_number
+
+	if user and user.first_name and user.last_name and user.phone_number and user.birthdate:
+		resp = handle_inquery(user, body)
+	else:
+		resp = signup_new_user(user, body)
  
-    message = "".join([name, " has messaged ", request.values.get('To'), " ", 
-        str(counter), " times."])
-    resp = twilio.twiml.Response()
-    resp.sms(message)
- 
-    return str(resp)
+	return str(resp)
 
 
 def signup_new_user(user, body=None):
@@ -42,36 +48,171 @@ def signup_new_user(user, body=None):
 	if not user.phone_number:
 		user.phone_number = body
 		user.save()
-		message = "Welcome to Proactive Law! Tell us your first name to get started."
-	if not user.first_name:
+		message = "Welcome to Proactive Law! Tell us your first name to get started and to subscribe to court proceedings."
+	elif not user.first_name:
 		user.first_name = body
 		user.save()
 		message = "Hello %s, what's your last name?" % user.first_name
-	else if not user.last_name:
+	elif not user.last_name:
 		user.last_name = body
 		user.save()
 		message = "Welcome %s %s, we just need your birthdate (MM/DD/YYYY) to verify your identity" % (user.first_name, user.last_name)
-	else if not user.birthdate:
-		user.birthdate = "%s 0:00" % body
-		message =  "%s, Thanks for signing up for Proactive Law! How can we help you? (You can type HElP for a list of options)" % user.first_name
+	elif not user.birthdate:
+		user.birthdate = body
+		user.save()
+		message =  "%s, Thanks for signing up for Proactive Law! How can we help you? (You can type START for a list of options)" % user.first_name
 	else:
-		"Welcome %s %s, how can we help you today? (You can type HElP for a list of options)" % (user.first_name, user.last_name)
-    resp.sms(message)
+		"Welcome %s %s, how can we help you today? (You can type START for a list of options)" % (user.first_name, user.last_name)
+	resp.sms(message)
+	print message
 	return resp 
 
 def handle_inquery(user, body=None):
 	"""Handles incoming requests."""
 	resp = twilio.twiml.Response()
-	if body == "HELP":
-		message = "Proactive Law is here to help you with your legal questions, 24/7.\n"
-				  "Type CITATIONS to view outstanding citations.\n"
-				  "WARRANT to view outstanding warrants.\n"
-				  "SUBSCRIBE to send reminders on court proceedings.\n"
-				  "PAY to pay outstanding bills.\n"
+	if body == "START":
+		message = """Proactive Law is here to help you with your legal questions, 24/7.\n
+				  Type CITATIONS to view outstanding citations.\n
+				  VIOLATIONS to view outstanding violations.\n
+				  WARRANTS to view outstanding warrants.\n
+				  PAY to pay outstanding bills."""
+	elif body == "CITATIONS":
+		try:
+			citations = Citation.Query.filter(
+				first_name=user.first_name, last_name=user.last_name,
+				date_of_birth=user.birthdate).order_by("citation_number")
+		except QueryResourceDoesNotExist:
+			message = "Congratulations! You currently have no oustanding citations"
+			resp.sms(message)
+			return resp
 
+		citation_ids = []
+		for citation in citations:
+			citation_ids.append(citation.citation_number)
 
+		"""
+		try:
+			violations = Violation.Query.filter(
+				citation_number__in=citation_ids, status__nin=["CLOSED", "DISMISS WITHOUT COSTS"])
+		except QueryResourceDoesNotExist:
+			message = "Congratulations! You currently have no outstanding citations"
+			resp.sms(message)
+			return resp
+
+		outstanding_citations = []
+		for violation in violations:
+			if violation.citation_number not in outstanding_citations:
+				outstanding_citations.append(violation.citation_number)
+		"""
+
+		message = "You have %s outstanding citations:\n" % len(citations)
+		index = 1
+		for citation in citations:
+			#if citation.citation_number in outstanding_citations:
+			message = message + "%s) Citation number: %s with court proceeding date: %s at: %s, %s\n" % (
+				index, int(citation.citation_number), citation.court_date.split(" ")[0], citation.court_address, citation.court_location.title())
+			index = index + 1
+
+		message = message + "Reply with the citation number to view a specific citation or enter START to view the main menu\n"
+	# Match a citation
+	elif re.match('^^[0-9]{8,9}$', body):
+		pass
+		#TODO
+	elif body == "VIOLATIONS":
+		try:
+			citations = Citation.Query.filter(
+				first_name=user.first_name, last_name=user.last_name,
+				date_of_birth=user.birthdate).order_by("citation_number")
+		except QueryResourceDoesNotExist:
+			message = "Congratulations! You currently have no outstanding violations"
+			resp.sms(message)
+			return resp
+
+		citation_ids = []
+		for citation in citations:
+			citation_ids.append(citation.citation_number)
+
+		try:
+			violations = Violation.Query.filter(
+				citation_number__in=citation_ids, status__nin=["CLOSED", "DISMISS WITHOUT COSTS"]).order_by("violation_number")
+		except QueryResourceDoesNotExist:
+			message = "Congratulations! You currently have no outstanding violations"
+			resp.sms(message)
+			return resp
+
+		message = "You have %s outstanding violations:\n" % len(violations)
+		total_amount = 0
+		for i, violation in enumerate(violations):
+			message = message + "%s) Violation number: %s for: %s with fines: $%s" % (
+				i+1, violation.violation_number, violation.violation_description, violation.court_cost + violation.fine_amount)
+			if violation.warrant_status:
+				message = message + " and warrant: %s issued\n" % violation.warrant_number
+			else:
+				message = message + "\n"
+			total_amount = total_amount + violation.court_cost + violation.fine_amount
+
+		message = message + "Your total amount owning is: $%s\n" % total_amount
+
+		message = message + "Reply PAY violation number to pay a specific violation or enter START to view the main menu\n"
+
+	elif body == "WARRANTS":
+		try:
+			citations = Citation.Query.filter(
+				first_name=user.first_name, last_name=user.last_name,
+				date_of_birth=user.birthdate).order_by("-citation_number")
+		except QueryResourceDoesNotExist:
+			message = "Congratulations! You currently have no outstanding warrants"
+			resp.sms(message)
+			return resp
+
+		citation_ids = []
+		for citation in citations:
+			citation_ids.append(citation.citation_number)
+
+		try:
+			violations = Violation.Query.filter(
+				citation_number__in=citation_ids, status__nin=["CLOSED", "DISMISS WITHOUT COSTS"], warrant_status=True)
+		except QueryResourceDoesNotExist:
+			message = "Congratulations! You currently have no outstanding warrants"
+			resp.sms(message)
+			return resp
+
+		message = "You have %s outstanding warrants:\n" % len(violations)
+		for i, violation in enumerate(violations):
+			message = message + "%s) Warrant number: %s for: %s with violation number: %s and fines: $%s\n" % (
+				i+1, violation.warrant_number, violation.violation_description, violation.violation_number, violation.court_cost + violation.fine_amount)
+
+		message = message + "Reply PAY violation number to pay a specific violation or enter START to view the main menu\n"
+
+	elif body.startswith("PAY"):
+		if body == "PAY":
+			message = """Please reply PAY violation number to pay a specific violation.\n
+					  To view your outstanding violations, reply VIOLATIONS."""
+			resp.sms(message)
+			return resp
+		
+		violation_id = body.strip().split(" ")[1]
+		try:
+			violation = Violation.Query.get(violation_number=violation_id)
+		except QueryResourceDoesNotExist:
+			message = "Sorry, the violation number you entered was not found. Please try again or reply START to view the main menu."
+			resp.sms(message)
+			return resp
+
+		message = "You are about to pay $%s for Violation number: %s for: %s\n" % (violation.court_cost + violation.fine_amount, violation.violation_number, violation.violation_description)
+		message = message + """Which payment method would you liked to use?\n
+					Reply CHECK and attach a picture of your check via MMS to pay by cheque\n
+					MONEYORDER and attach a picture of your money order via MMS to pay by money order\n
+					SMS to pay by phone."""
+	elif body == "SMS":
+		message = "Please text PAYCOURT to shortcode 77345 and we will reply with a confirmation once your payment is processed"
 	resp.sms(message)
+	print message
 	return resp
 
+def run():
+	app.run(debug=True)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+	app.run(debug=True)
