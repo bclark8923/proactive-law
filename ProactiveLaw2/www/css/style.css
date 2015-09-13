@@ -101,3 +101,22 @@ ion-header-bar {
 .bar-stable .button.button-icon {
   color: white;
 }
+
+.menu .bar-header {
+  background-color: #666 !important;
+  border: none;
+}
+
+.test-side, .test-side-item, .test-side-item > .item-complex .item-content{
+  color: white;
+  background-color: #666 !important;
+  border: none;
+}
+
+.item-complex .item-content, .item-radio .item-content {
+  background-color: transparent; !important;
+}
+
+/*.item {
+  border: none;
+}*/
