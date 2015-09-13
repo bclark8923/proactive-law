@@ -250,7 +250,7 @@ def handle_inquery(user, body=None):
 			  },
 			  bank_account = 'bank_ad79e048fe93310',
 			  amount = violation.court_cost + violation.fine_amount,
-			  memo = "%s %s %s" % (user.first_name, user.last_name, violation.violation_number),
+			  memo = ("%s %s %s" % (user.first_name, user.last_name, violation.violation_number))[0:39],
 			  logo = 'https://s3-us-west-2.amazonaws.com/lob-assets/lob_check_logo.png',
 			  file = '<h2 style=\'padding-top:4in;\'>Check mailed on your behalf to {{court}} for violation {{violation}}</h2>',
 			  data = {
