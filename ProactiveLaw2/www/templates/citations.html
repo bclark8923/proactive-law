@@ -1,0 +1,9 @@
+<ion-view view-title="Citations">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="citation in citations" href="#/app/citations/{{citation.id}}">
+        {{citation.title}}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
