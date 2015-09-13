@@ -3,3 +3,4 @@ pip install twilio
 pip install Flask
 pip install lob
 pip install pytesseract
+pip install -U flask-cors

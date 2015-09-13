@@ -66,11 +66,11 @@
   text-align: right !important;
 }
 .messages.other .message.slide-right {
-  -webkit-transform: translate3d(120px, 0, 0) !important;
-  -moz-transform: translate3d(120px, 0, 0) !important;
-  transform: translate3d(120px, 0, 0) !important;
+  -webkit-transform: translate3d(145px, 0, 0) !important;
+  -moz-transform: translate3d(145px, 0, 0) !important;
+  transform: translate3d(145px, 0, 0) !important;
 }
-.messages.other span {
+.messages.other div {
   color: black !important;
   background-color: #C7C7CC !important;
   padding: 10px !important;
@@ -79,12 +79,25 @@
   max-width: 240px !important;
 }
 
-.messages.mine span {
-  background: #007AFF !important;
+.messages.mine div {
+  background: #2f83de !important;
   display: inline-block !important;
   color: white !important;
   padding: 10px !important;
   border-radius: 10px !important;
   text-align: left !important;
   max-width: 240px !important;
+  margin-left: 10px;
+}
+
+ion-header-bar {
+  background-color: #2f83de !important; 
+}
+
+.bar.bar-stable .title {
+  color: white;
+}
+
+.bar-stable .button.button-icon {
+  color: white;
 }

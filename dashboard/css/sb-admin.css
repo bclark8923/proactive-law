@@ -9,6 +9,7 @@
 body {
     margin-top: 100px;
     background-color: #222;
+    font-family: 'Ubuntu';
 }
 
 @media(min-width:768px) {
@@ -127,7 +128,7 @@ ul.alert-dropdown {
         border: none;
         border-radius: 0;
         overflow-y: auto;
-        background-color: #1D74E1;
+        background-color: #2f83de;
         bottom: 0;
         overflow-x: hidden;
         padding-bottom: 40px;
@@ -149,9 +150,9 @@ ul.alert-dropdown {
 }
 
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
-    border-color: #1D74E1;
+    border-color: #2f83de;
     box-shadow: none;
-    background-color: #1D74E1;
+    background-color: #2f83de;
 }
 
 .navbar-inverse .navbar-brand {
@@ -164,9 +165,15 @@ ul.alert-dropdown {
     background-color: #2764C0;
 }
 .navbar-inverse {
-    border-color: #1D74E1;
+    border-color: #2f83de;
     box-shadow: none;
-    background-color: #1D74E1;
+    background-color: #2f83de;
+}
+.navbar-brand {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 26px;
 }
 
 .side-nav>li>ul {

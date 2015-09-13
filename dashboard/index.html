@@ -22,6 +22,8 @@
 
     <!-- Custom Fonts -->
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
 
     <script src="//www.parsecdn.com/js/parse-1.6.0.min.js"></script>
 
@@ -245,10 +247,10 @@
                             <label for="exampleInputEmail1">Court Location</label>
                             <select id="court_location" class="form-control">
                                 <option>Ballwin</option>
-                                <option>Bella Villa</option>
-                                <option>Bellefontaine Neighbors</option>
                                 <option>Bel-Nor</option>
                                 <option>Bel-Ridge</option>
+                                <option>Bella Villa</option>
+                                <option>Bellefontaine Neighbors</option>
                                 <option>Berkeley</option>
                                 <option>Beverly Hills</option>
                                 <option>Black Jack</option>
@@ -310,8 +312,6 @@
                                 <option>Sunset Hills</option>
                                 <option>Sycamore Hills</option>
                                 <option>Town and Country</option>
-                                <option>Twin Oaks</option>
-                                <option>University City</option>
                                 <option>Uplands Park</option>
                                 <option>Valley Park</option>
                                 <option>Velda City</option>
@@ -322,16 +322,9 @@
                                 <option>Webster Groves</option>
                                 <option>Wellston</option>
                                 <option>Westwood</option>
-                                <option>Wilbur Park</option>
-                                <option>Wildwood</option>
                                 <option>Winchester</option>
                                 <option>Woodson Terrace</option>
-                                <option>Unincorporated St. Louis County</option>
                             </select>
-                          </div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail1">Court Address</label>
-                            <input type="text" class="form-control" id="court_address" placeholder="Court Address">
                           </div>
                           <div class="form-group">
                             <label for="exampleInputEmail1">Defendant Address</label>
@@ -371,13 +364,92 @@
     <script>
         Parse.initialize("vvMc0yrmqU1kbU2nOieYTQGV0QzzfVQg4kHhQWWL", "IKjAtvBXfKD3rjQTlIMS5xnq8mnFFeW05FgJU94u");
 
+        courts = {
+"BALLWIN":"300 Park Drive",
+"BEL-NOR":"8416 Natural Bridge Road",
+"BEL-RIDGE":"8920 Natural Bridge Road",
+"BELLA VILLA":"751 Avenue H",
+"BELLEFONTAINE NEIGHBORS":"9641 Bellefontaine Road",
+"BERKELEY":"6140 N Hanley Road",
+"BEVERLY HILLS":"7150 Natural Bridge Road",
+"BLACK JACK":"12500 Old Jamestown Road",
+"BRECKENRIDGE HILLS":"9623 St. Charles Rock Road",
+"BRENTWOOD":"2348 South Brentwood Boulevard",
+"BRIDGETON":"12355 Natural Bridge Road",
+"CALVERTON PARK":"52 Young Drive",
+"CHARLACK":"8401 Midland Boulevard",
+"CHESTERFIELD":"690 Chesterfield Parkway West",
+"CLARKSON VALLEY":"15933 Clayton Road",
+"CLAYTON":"10 South Brentwood Boulevard",
+"COOL VALLEY":"100 Signal Drive",
+"COUNTRY CLUB HILLS":"7422 Eunice Avenue",
+"CRESTWOOD":"1 Detjen Drive",
+"CREVE COEUR":"300 North New Ballas Road",
+"DELLWOOD":"1415 Chambers Road",
+"DES PERES":"12325 Manchester Road",
+"EDMUNDSON":"4440 Holman Lane",
+"ELLISVILLE":"37 Weis Avenue",
+"EUREKA":"120 City Hall Drive",
+"FENTON":"625 New Smizer Mill Road",
+"FERGUSON":"110 Church Street",
+"FLORDELL HILLS":"7001 Brandon Avenue",
+"FLORISSANT":"315 Howdershell Road",
+"FRONTENAC":"10555 Clayton Road",
+"GLENDALE":"424 North Sappington Road",
+"GRANTWOOD VILLAGE":"One Missionary Way",
+"GREENDALE":"7700 Natural Bridge Road",
+"HANLEY HILLS":"7713 Utica Drive",
+"HAZELWOOD":"415 Elm Grove Lane",
+"HILLSDALE":"6428 Jesse Jackson Avenue",
+"JENNINGS":"7005 Florence Avenue",
+"KINLOCH":"8140 Scott",
+"KIRKWOOD":"139 S. Kirkwood Road",
+"LADUE":"9435 Clayton Road",
+"LAKESHIRE":"10000 Puttington Drive",
+"MACKENZIE":"4400 Shrewsbury Avenue",
+"MANCHESTER":"200 Highlands Blvd. Dr.",
+"MAPLEWOOD":"7601 Manchester Road",
+"MARLBOROUGH":"7826 Wimbledon Drive",
+"MARYLAND HEIGHTS":"11911 Dorsett Road",
+"MOLINE ACRES":"2449 Chambers Road",
+"NORMANDY":"7700 Natural Bridge Road",
+"NORTHWOODS":"4600 Oakridge Boulevard",
+"OAKLAND":"1320 W. Lockwood Avenue",
+"OLIVETTE":"9473 Olive Boulevard",
+"OVERLAND":"2410 Goodale Avenue",
+"PACIFIC":"300 Hoven Drive",
+"PAGEDALE":"1420 Ferguson Avenue",
+"PASADENA HILLS":"3915 Roland Boulevard",
+"PASADENA PARK":"7615 South Sunset",
+"PINE LAWN":"6250 Steve Marve Avenue",
+"RICHMOND HEIGHTS":"7447 Dale Avenue",
+"RIVERVIEW":"9699 Lilac Drive",
+"ROCK HILL":"320 West Thornton Avenue",
+"SHREWSBURY":"4400 Shrewsbury Avenue",
+"ST. ANN":"10405 St. Charles Rock Road",
+"ST. JOHN":"8944 St. Charles Rock Road",
+"SUNSET HILLS":"3939 South Lindbergh",
+"SYCAMORE HILLS":"8944 St. Charles Rock Road",
+"TOWN AND COUNTRY":"1011 Municipal Center Drive",
+"UNIVERSITY CITY":"975 Pennsylvania Avenue",
+"VALLEY PARK":"320 Benton Street",
+"VELDA CITY":"2560 Lucas & Hunt Road",
+"VELDA VILLAGE HILLS":"3501 Avondale Avenue",
+"VINITA PARK":"8374 Midland Boulevard",
+"VINITA TERRACE":"8027 Page Boulevard",
+"WARSON WOODS":"10015 Manchester Road",
+"WEBSTER GROVES":"4 Lockwood Aveue",
+"WELLSTON":"1414 Evergreen",
+"WILDWOOD":"16860 Main Street",
+"WINCHESTER":"109 Lindy Boulevard",
+"WOODSON TERRACE":"4323 Woodson Road"
+};
         $(function() {
             $("#add-citation" ).click(function() {
                 $("#citation_date").val('9/8/2015');
                 $("#citation_number").val(2893498234);
-                $("#court_date").val('9/13/2015');
+                $("#court_date").val('9/14/2015');
                 $("#court_location").val('Brentwood');
-                $("#court_address").val('2348 South Brentwood Boulevard');
                 $("#date_of_birth").val('10/12/1989');
                 $("#defendant_address").val('123 I messed up');
                 $("#defendant_city").val('St. Louis');
@@ -394,12 +466,14 @@
             var citation = new Citation();
             var court_date = $("#court_date").val() + " 0:00:00";
             var citation_date = $("#citation_date").val() + " 0:00:00";
+            var court_location = $("#court_location").val().toUpperCase();
+            var court_address = courts[court_location];
             citation.save({
                 citation_date: citation_date,
                 citation_number: Number($("#citation_number").val()),
                 court_date: court_date,
-                court_location: $("#court_location").val().toUpperCase(),
-                court_address: $("#court_address").val(),
+                court_location: court_location,
+                court_address: court_address,
                 date_of_birth: $("#date_of_birth").val(),
                 defendant_address: $("#defendant_address").val(),
                 defendant_city: $("#defendant_city").val(),
@@ -413,7 +487,7 @@
               $("#citation_date").val('');
               $("#citation_number").val('');
               $("#court_date").val('');
-              $("#court_location").val('');
+              $("#court_location").val('Ballwin');
               $("#date_of_birth").val('');
               $("#defendant_address").val('');
               $("#defendant_city").val('');

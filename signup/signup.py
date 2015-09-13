@@ -211,25 +211,25 @@ def handle_inquery(user, body=None):
 			resp.sms(message)
 			return resp
 
-		message = "You are about to pay $%s for Violation number: %s for: %s\n" % (violation.court_cost + violation.fine_amount, violation.violation_number, violation.violation_description)
-		message = message + """Which payment method would you liked to use?\n
-					SMS %s to pay by phone.\n
-					Reply CHECK and attach a picture of your check via MMS to pay by cheque\n
-					MONEYORDER and attach a picture of your money order via MMS to pay by money order.\n""" % violation.violation_number
-	elif body.startswith("SMS"):
-		if body == "SMS":
-			message = """Please reply SMS violation number to pay a specific violation.\n
-					  To view your outstanding violations, reply VIOLATIONS."""
-			resp.sms(message)
-			return resp
+	# 	message = "You are about to pay $%s for Violation number: %s for: %s\n" % (violation.court_cost + violation.fine_amount, violation.violation_number, violation.violation_description)
+	# 	message = message + """Which payment method would you liked to use?\n
+	# 				SMS %s to pay by phone.\n
+	# 				Reply CHECK and attach a picture of your check via MMS to pay by cheque\n
+	# 				MONEYORDER and attach a picture of your money order via MMS to pay by money order.\n""" % violation.violation_number
+	# elif body.startswith("SMS"):
+	# 	if body == "SMS":
+	# 		message = """Please reply SMS violation number to pay a specific violation.\n
+	# 				  To view your outstanding violations, reply VIOLATIONS."""
+	# 		resp.sms(message)
+	# 		return resp
 
-		violation_id = body.strip().split(" ")[1]
-		try:
-			violation = Violation.Query.get(violation_number=violation_id)
-		except QueryResourceDoesNotExist:
-			message = "Sorry, the violation number you entered was not found. Please try again or reply START to view the main menu."
-			resp.sms(message)
-			return resp
+	# 	violation_id = body.strip().split(" ")[1]
+		# try:
+		# 	violation = Violation.Query.get(violation_number=violation_id)
+		# except QueryResourceDoesNotExist:
+		# 	message = "Sorry, the violation number you entered was not found. Please try again or reply START to view the main menu."
+		# 	resp.sms(message)
+		# 	return resp
 
 		try:
 			citation = Citation.Query.get(citation_number=violation.citation_number)
