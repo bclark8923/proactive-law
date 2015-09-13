@@ -1,15 +1,19 @@
 from flask import Flask, request, redirect, session
+import lob
 import twilio.twiml
 from parse_rest.connection import register
 from parse_rest.datatypes import Object
 from parse_rest.query import QueryResourceDoesNotExist
-
+import time
 import re
+from flask.ext.cors import CORS
 
 
 app = Flask(__name__)
 app.config.from_object(__name__)
- 
+
+CORS(app)
+
 userClassName = "user"
 User = Object.factory(userClassName)
 
@@ -18,13 +22,21 @@ Citation = Object.factory(citationClassName)
 
 violationClassName = "violations"
 Violation = Object.factory(violationClassName)
+
+lob.api_key = 'test_00f79ccdc57159f0a24923537e716623ebb'
+
+@app.route("/payment", methods=['POST'])
+def handle_payment():
+	#TODO
+	pass
  
 @app.route("/", methods=['POST'])
-def hello_monkey():
+def hello():
 	"""Main method to handle incoming SMS."""
  
 	from_number = request.values.get('From')
 	body = request.values.get('Body')
+	print request.values
 	print from_number
 	print body
 
@@ -201,11 +213,66 @@ def handle_inquery(user, body=None):
 
 		message = "You are about to pay $%s for Violation number: %s for: %s\n" % (violation.court_cost + violation.fine_amount, violation.violation_number, violation.violation_description)
 		message = message + """Which payment method would you liked to use?\n
+					SMS %s to pay by phone.\n
 					Reply CHECK and attach a picture of your check via MMS to pay by cheque\n
-					MONEYORDER and attach a picture of your money order via MMS to pay by money order\n
-					SMS to pay by phone."""
-	elif body == "SMS":
-		message = "Please text PAYCOURT to shortcode 77345 and we will reply with a confirmation once your payment is processed"
+					MONEYORDER and attach a picture of your money order via MMS to pay by money order.\n""" % violation.violation_number
+	elif body.startswith("SMS"):
+		if body == "SMS":
+			message = """Please reply SMS violation number to pay a specific violation.\n
+					  To view your outstanding violations, reply VIOLATIONS."""
+			resp.sms(message)
+			return resp
+
+		violation_id = body.strip().split(" ")[1]
+		try:
+			violation = Violation.Query.get(violation_number=violation_id)
+		except QueryResourceDoesNotExist:
+			message = "Sorry, the violation number you entered was not found. Please try again or reply START to view the main menu."
+			resp.sms(message)
+			return resp
+
+		try:
+			citation = Citation.Query.get(citation_number=violation.citation_number)
+		except QueryResourceDoesNotExist:
+			message = "Sorry, the violation number you entered was not found. Please try again or reply START to view the main menu."
+			resp.sms(message)
+			return resp
+
+		cheque = lob.Check.create(
+			  description = violation.violation_number,
+			  to_address = {
+				'name': citation.court_location + ' MUNICIPALITY COURT',
+				'address_line1': citation.court_address,
+				'address_city': citation.court_location.title(),
+				'address_state': 'MO',
+				'address_zip': '63301',
+				'address_country': 'US'
+			  },
+			  bank_account = 'bank_ad79e048fe93310',
+			  amount = violation.court_cost + violation.fine_amount,
+			  memo = "%s %s %s" % (user.first_name, user.last_name, violation.violation_number),
+			  logo = 'https://s3-us-west-2.amazonaws.com/lob-assets/lob_check_logo.png',
+			  file = '<h2 style=\'padding-top:4in;\'>Check mailed on your behalf to {{court}} for violation {{violation}}</h2>',
+			  data = {
+				'court': citation.court_location + ' MUNICIPALITY COURT',
+				'violation': violation.violation_number
+			  }
+			)
+		print cheque
+		time.sleep(3)
+		#message = "Please text PAYCOURT to shortcode 77345 and we will reply with a confirmation once your payment is processed"
+		message = twilio.twiml.Message("Thanks for paying your violation! Here is the cheque that we mailed out on your behalf.\n")
+		message.media(cheque.thumbnails[0].large)
+		resp.append(message)
+		#resp.media(cheque.thumbnails[0].large)
+		#with resp.message() as message:
+			#message.body = "Thanks for paying your violation! Here is the cheque that we will mail out on your behalf\n"
+			#message.media = cheque.thumbnails[0].large
+		print message
+		return resp
+	else:
+		message = "Sorry, we did not understand your command, please enter START to view the main menu.\n"
+
 	resp.sms(message)
 	print message
 	return resp

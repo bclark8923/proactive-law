@@ -1,1 +1,5 @@
 pip install git+https://github.com/dgrtwo/ParsePy.git
+pip install twilio
+pip install Flask
+pip install lob
+pip install pytesseract
