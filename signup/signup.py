@@ -121,7 +121,7 @@ def handle_inquery(user, body=None):
 		index = 1
 		for citation in citations:
 			#if citation.citation_number in outstanding_citations:
-			message = message + "%s) Citation number: %s with court proceeding date: %s at: %s, %s\n" % (
+			message = message + "%s) Citation number: %s with court proceeding date: %s at: %s, %s\n\n" % (
 				index, int(citation.citation_number), citation.court_date.split(" ")[0], citation.court_address, citation.court_location.title())
 			index = index + 1
 
@@ -158,9 +158,9 @@ def handle_inquery(user, body=None):
 			message = message + "%s) Violation number: %s for: %s with fines: $%s" % (
 				i+1, violation.violation_number, violation.violation_description, violation.court_cost + violation.fine_amount)
 			if violation.warrant_status:
-				message = message + " and warrant: %s issued\n" % violation.warrant_number
+				message = message + " and warrant: %s issued\n\n" % violation.warrant_number
 			else:
-				message = message + "\n"
+				message = message + "\n\n"
 			total_amount = total_amount + violation.court_cost + violation.fine_amount
 
 		message = message + "Your total amount owning is: $%s\n" % total_amount
@@ -191,7 +191,7 @@ def handle_inquery(user, body=None):
 
 		message = "You have %s outstanding warrants:\n" % len(violations)
 		for i, violation in enumerate(violations):
-			message = message + "%s) Warrant number: %s for: %s with violation number: %s and fines: $%s\n" % (
+			message = message + "%s) Warrant number: %s for: %s with violation number: %s and fines: $%s\n\n" % (
 				i+1, violation.warrant_number, violation.violation_description, violation.violation_number, violation.court_cost + violation.fine_amount)
 
 		message = message + "Reply PAY violation number to pay a specific violation or enter START to view the main menu\n"

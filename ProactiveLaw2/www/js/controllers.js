@@ -62,9 +62,11 @@ angular.module('starter.controllers', [])
         citations = body.split('\n')
 
         angular.forEach(citations, function(citation) {
-          $scope.citations.push({
-            title: citation
-          })
+          if (citation != '') {
+            $scope.citations.push({
+              title: citation
+            })
+          }
         });
       });
 })
@@ -93,9 +95,11 @@ angular.module('starter.controllers', [])
         violations = body.split('\n')
 
         angular.forEach(violations, function(violation) {
-          $scope.violations.push({
-            title: violation
-          })
+          if (violation != '') {
+            $scope.violations.push({
+              title: violation
+            })
+          }
         });
       });
 })
@@ -121,9 +125,11 @@ angular.module('starter.controllers', [])
         warrants = body.split('\n')
 
         angular.forEach(warrants, function(warrant) {
-          $scope.warrants.push({
-            title: warrant
-          })
+          if (warrant != '') {
+            $scope.warrants.push({
+              title: warrant
+            })
+          }
         });
       });
 })
