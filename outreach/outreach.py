@@ -72,7 +72,7 @@ def run():
 			# sys.exit(0)
 		except: 
 			print "error"
-		time.sleep(15)
+		time.sleep(5)
 
 court_numbers = {
 "BALLWIN":"(636) 227-9468",

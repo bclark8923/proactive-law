@@ -25,6 +25,9 @@ Violation = Object.factory(violationClassName)
 
 lob.api_key = 'test_00f79ccdc57159f0a24923537e716623ebb'
 
+register("vvMc0yrmqU1kbU2nOieYTQGV0QzzfVQg4kHhQWWL", "waZK2MtE4TMszpU0mYSbkB9VmgLdLxfYf8XCuN7D", master_key="YPyRj37OFlUjHmmpE8YY3pfbZs7FqnBngxX4tezk")
+
+
 @app.route("/payment", methods=['POST'])
 def handle_payment():
 	#TODO
