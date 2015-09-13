@@ -8,7 +8,7 @@ import time
 import threading
 import errno
 import os
-import signup
+# import signup
 import outreach
 import responder
 from parse_rest.connection import register
