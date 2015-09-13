@@ -1,1 +1,2 @@
-pip install git+https://github.com/dgrtwo/ParsePy.git
+sudo pip install git+https://github.com/dgrtwo/ParsePy.git
+sudo pip install twilio
